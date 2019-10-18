@@ -1,3 +1,3 @@
-library 'Maven-Test@test'
+@Library('Maven-Test@test')
 
-Git_Flow('Test1', 'Test2')
+Git_Flow("Test1", "Test2")
