@@ -1,2 +1,2 @@
 @Library('Maven-Test@test')
-git_flow('Test1', 'Test2')
+git_flow(Test1, Test)
