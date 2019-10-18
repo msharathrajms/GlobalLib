@@ -1,4 +1,4 @@
 @Library('Maven-Test@test') _
 Git_Flow('sd', 'nn')
 
-artifactReleaseProcess()
+Git_Flow.artifactReleaseProcess()
