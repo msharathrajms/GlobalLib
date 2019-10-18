@@ -1,0 +1,45 @@
+organizationFolder('QE-Containers') {
+    description('This contains branch source jobs for Bitbucket')
+    displayName('QE Containers')
+    triggers {
+       
+    }
+    organizations {
+        bitbucket {
+            repoOwner('qe')
+            serverUrl('https://stash.intralinks.com/')
+            credentialsId('8d111b0c-7742-4c79-9375-b0f7b44ed254')
+            autoRegisterHooks(true)
+            traits {
+                sourceRegexFilter {
+                    // A Java regular expression to restrict the project names.
+                    regex('.*')
+                }
+            }
+        }
+    }
+    
+    // discover Branches (workaround due to JENKINS-46202)
+    configure { node ->
+        // node represents <jenkins.branch.OrganizationFolder>
+        def traits = node / 'navigators' / 'com.cloudbees.jenkins.plugins.bitbucket.BitbucketSCMNavigator' / 'traits'
+        traits << 'com.cloudbees.jenkins.plugins.bitbucket.BranchDiscoveryTrait' {
+            strategyId(3) // detect all branches
+        }
+    }
+}
+
+listView("QE-Jobs") {
+    jobs {
+        name("QE-Containers")
+    }
+    columns {
+        status()
+        weather()
+        name()
+        lastSuccess()
+        lastFailure()
+        lastDuration()
+        buildButton()
+    }
+}
