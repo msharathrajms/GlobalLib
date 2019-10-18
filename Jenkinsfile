@@ -1,2 +1,2 @@
 @Library('Maven-Test@test') _
-Git_Flow.call('sd', 'nn')
+Git_Flow('sd', 'nn')
