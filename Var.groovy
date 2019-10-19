@@ -1,13 +1,11 @@
-freeStyleJob('Artifactory-Deployment'){
+freejStyleJob('Artifactory-Deployment'){
 
 		def server
 		def buildInfo
 		def rtMaven
 		
-		steps {
-			git url: 'https://github.com/JFrog/project-examples.git'
-		}
-	 
+		git url: 'https://github.com/JFrog/project-examples.git'
+		
 		steps {
 			artifactoryConfiguration()
 			buildDeployPublish()
