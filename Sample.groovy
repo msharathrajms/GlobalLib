@@ -6,12 +6,6 @@ job('Test-Artifactory'){
 	rtMaven.deployer server: server, releaseRepo: 'sample-repo-local', snapshotRepo: 'sample-repo-local'
 	rtMaven.deployer.deployArtifacts = true
 	
-	testPipeLine()
-	
-}
-def testPipeLine(){
-
-	pipeline {
 		parameters {
 			choiceParam('SOURCE_BRANCH', ['Master', 'Develop'], 'Source branch from code is merged to Destination')
 			choiceParam('DESTINATION_BRANCH', ['Master', 'Release'], 'Destination branch where the code should be merged')
@@ -36,7 +30,7 @@ def testPipeLine(){
 				server.publishBuildInfo buildInfo
 			}
 		}
-	}
-
+	
 }
+
 	
