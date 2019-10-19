@@ -1,68 +1,40 @@
-def call(String gitRepo, String gitProj) {
-  def pomData =  readFileFromWorkspace('pom.xml')
-  def buildStatus 
-  pipelineJob('Your App Pipeline') { 
-    agent any
+job('Artifactory-Deployment'){
 
-    parameters {
-		choiceParam('SOURCE_BRANCH', ['Develop', 'Master'], 'Source branch from code is merged to Destination')
-		choiceParam('DESTINATION_BRANCH', ['Master', 'Release'], 'Destination branch where the code should be merged')
-		choiceParam('TAG_REQUIRED', ['Yes', 'No'], 'Do you require a tag creation')
+	node {
+		def server
+		def buildInfo
+		def rtMaven
+		
+		stage ('Clone') {
+			git url: 'https://github.com/JFrog/project-examples.git'
+		}
+	 
+		stage ('Artifactory configuration') {
+			artifactoryConfiguration()
+		}
+			
+		stage ('Install-Depoly-Publish') {
+			buildDeployPublish()
+		}
 	}
+}	
 
-    stages {
-      stage('git-checkout') {
-        steps {
-			definition { 
-				cpsScm { 
-					scm {
-						git {
-							remote {	
-							url('https://github.com/msharathraj/Maven-Test.git')
-							branch('develop')
-							extensions {
-								localBranch('develop')
-							}
-						}
-				}
-			}
-						
-    } 
- 		
-		
-          
-        }
-      }
-      stage('git-merge') {
-		release =  getReleasedVersion()
-	     batchFile("echo Hello World!  ${release} ")
-	     batchFile('echo DESTINATION_BRANCH ${DESTINATION_BRANCH}! ')
-		 batchFile('git branch')
-		 batchFile('git checkout master')
-		 batchFile('git merge origin/test')
-		batchFile('echo Hello Merge! ' )
-		
-		batchFile('echo {currentBuild.result}')
-		
-		
-		script {
-                def status = currentBuild.result
+def artifactoryConfiguration(){
+		server = Artifactory.server 'jenkins-artifactory-server'
 
-                print 'status is ' + status
+		rtMaven = Artifactory.newMavenBuild()
+		rtMaven.tool = 'MAVEN'// Tool name from Jenkins configuration
+		rtMaven.deployer releaseRepo: 'sample-repo', snapshotRepo: 'sample-repo-snapshot', server: server
+		rtMaven.resolver releaseRepo: 'sample-repo', snapshotRepo: 'sample-repo-snapshot', server: server
+		rtMaven.deployer.deployArtifacts = false // Disable artifacts deployment during Maven run
 
-                if (status == "SUCCESS" ) {
-					batchFile('echo Hello Success! ' )
-					buildStatus = true
-                }    
-        
-             }
-		}
-		stage ('git-release'){
-			batchFile('echo test release')
-		}
-    }
-  }
+		buildInfo = Artifactory.newBuildInfo()
+
 }
-def getReleasedVersion() {
-	return (readFileFromWorkspace('pom.xml') =~ '<version>(.+)-SNAPSHOT</version>')[0][1]
-}
+ def buildDeployPublish(){
+	
+		rtMaven.run pom: 'pom.xml', goals: 'install', buildInfo: 'buildInfo'
+		rtMaven.deployer.deployArtifacts 'buildInfo'
+		server.publishBuildInfo 'buildInfo'
+		
+ }
