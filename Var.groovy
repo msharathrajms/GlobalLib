@@ -1,6 +1,5 @@
-job('Artifactory-Deployment'){
+pipelinejob('Artifactory-Deployment'){
 
-	node {
 		def server
 		def buildInfo
 		def rtMaven
@@ -16,7 +15,7 @@ job('Artifactory-Deployment'){
 		stage ('Install-Depoly-Publish') {
 			buildDeployPublish()
 		}
-	}
+	
 }	
 
 def artifactoryConfiguration(){
