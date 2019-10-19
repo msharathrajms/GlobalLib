@@ -4,11 +4,11 @@ freeStyleJob('Artifactory-Deployment'){
 		def buildInfo
 		def rtMaven
 		
-		steps ('Clone') {
+		steps {
 			git url: 'https://github.com/JFrog/project-examples.git'
 		}
 	 
-		steps ('Artifactory configuration') {
+		steps {
 			artifactoryConfiguration()
 			buildDeployPublish()
 		}	
