@@ -1,21 +1,17 @@
-pipelinejob('Artifactory-Deployment'){
+job('Artifactory-Deployment'){
 
 		def server
 		def buildInfo
 		def rtMaven
 		
-		stage ('Clone') {
+		steps ('Clone') {
 			git url: 'https://github.com/JFrog/project-examples.git'
 		}
 	 
-		stage ('Artifactory configuration') {
+		steps ('Artifactory configuration') {
 			artifactoryConfiguration()
-		}
-			
-		stage ('Install-Depoly-Publish') {
 			buildDeployPublish()
-		}
-	
+		}	
 }	
 
 def artifactoryConfiguration(){
