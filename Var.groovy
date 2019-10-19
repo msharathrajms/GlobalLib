@@ -1,4 +1,4 @@
-freejStyleJob('Artifactory-Deployment'){
+freeStyleJob('Artifactory-Deployment'){
 
 		def server
 		def buildInfo
