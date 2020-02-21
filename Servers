@@ -1,0 +1,53 @@
+pipeline {
+    agent any 
+	parameters {
+        text(name: 'Servers', defaultValue: '', description: 'Name of servers which needs action')
+       	choice(
+              name: 'Actions',
+              choices: ['DEV', 'QA', 'PROD'],
+              description: 'Select Cache Clear Option'
+            )
+	}
+    stages {
+        stage('Checking Servers') { 
+            steps {
+                script{
+                sh """
+                echo "Printing servernames"
+                echo "${Servers}"
+                """    
+                }
+            }
+        }
+        stage('Clearing Cache') { 
+           when {
+               expression { 
+                    params.Actions == 'QA' 
+               }
+            }
+            steps {
+                echo "Hello, QA!"
+            }
+        }
+        stage('Clearing Cache Local') { 
+           when {
+               expression { 
+                    params.Actions == 'PROD' 
+               }
+            }
+            steps {
+                echo "Hello, PROD!"
+            }
+        }
+        stage('Clearing Cache Local1') { 
+           when {
+               expression { 
+                    params.Actions == 'DEV' 
+               }
+            }
+            steps {
+                echo "Hello, Dev!"
+            }
+        }
+    }
+}
